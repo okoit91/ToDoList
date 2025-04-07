@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  sql:
+    image: postgres:16
+    container_name: ToDoList-sql
+    ports:
+      - 5432:5432
+    volumes:
+      - sql-volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=ToDoList
+    restart: on-failure
+    logging:
+      options:
+        max-size: 10m
+        max-file: 3
+
+volumes:
+  sql-volume:

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="14.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.14" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.14" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\App.Contracts.DAL\App.Contracts.DAL.csproj" />
+        <ProjectReference Include="..\App.Domain\App.Domain.csproj" />
+        <ProjectReference Include="..\Base.DAL.EF\Base.DAL.EF.csproj" />
+    </ItemGroup>
+
+</Project>
