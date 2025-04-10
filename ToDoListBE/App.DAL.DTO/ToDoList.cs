@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using Base.Contracts.Domain;
 
 namespace App.DAL.DTO;
@@ -15,9 +16,11 @@ public class ToDoList : IDomainEntityId
     
     public Guid? ParentListId { get; set; }
     
-    [ForeignKey(nameof(ParentListId))]
+    [JsonIgnore]
     public ToDoList? ParentList { get; set; }
     
     public ICollection<ToDoList>? SubLists { get; set; }
+    
+    public ICollection<Task>? Tasks { get; set; }
     
 }

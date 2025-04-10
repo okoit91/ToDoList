@@ -9,4 +9,6 @@ public interface IToDoListService :
 {
     Task<IEnumerable<App.BLL.DTO.ToDoList>> GetAllSortedAsync();
     
+    public Task<IEnumerable<ToDoList>> GetSubListsAsync(Guid parentId);
+    
 }

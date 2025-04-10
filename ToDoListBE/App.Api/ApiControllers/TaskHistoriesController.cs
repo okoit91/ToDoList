@@ -48,7 +48,7 @@ namespace App.Api.ApiControllers
         
         
         /// <summary>
-        /// Returns the taskHistory with the given ID.
+        /// Returns the taskHistory with the given id.
         /// </summary>
         /// <param name="id">given ID</param>
         /// <returns>TaskHistory with given ID</returns>
@@ -154,6 +154,41 @@ namespace App.Api.ApiControllers
 
             return NoContent();
         }
+        
+        /// <summary>
+        ///  Marks the TaskHistory entry as reverted.
+        ///  Task associated with it will be reactivated as an undone task.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost("revert/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> RevertTaskHistory(Guid id)
+        {
+            var history = await _bll.TaskHistories.FirstOrDefaultAsync(id);
+            if (history == null) return NotFound();
+
+            
+            history.RevertedAt = DateTime.UtcNow;
+            _bll.TaskHistories.Update(history);
+
+            
+            var task = await _bll.Tasks.FirstOrDefaultAsync(history.TaskId);
+            if (task == null) return NotFound();
+
+            task.IsArchived = false;
+            task.IsCompleted = false;
+            task.CompletedAt = null;
+            task.UpdatedAt = DateTime.UtcNow;
+
+            _bll.Tasks.Update(task);
+            await _bll.SaveChangesAsync();
+
+            return NoContent();
+        }
+        
+        
         /// <summary>
         /// Returns true if the task history with the given id exists.
         /// </summary>

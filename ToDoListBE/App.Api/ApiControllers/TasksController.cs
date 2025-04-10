@@ -125,6 +125,8 @@ namespace App.Api.ApiControllers
         public async Task<ActionResult<App.DTO.v1_0.Task>> PostTask(App.DTO.v1_0.Task input)
         {
             var res = _mapper.Map(input);
+            res!.CreatedAt = DateTime.UtcNow;
+
             var createdInput = _bll.Tasks.Add(res);
             await _bll.SaveChangesAsync();
 
@@ -144,13 +146,20 @@ namespace App.Api.ApiControllers
         [Consumes("application/json")]
         public async Task<ActionResult<App.DTO.v1_0.Task>> DeleteTask(Guid id)
         {
-            var res = await _bll.Tasks.FirstOrDefaultAsync(id);
-            if (res == null)
+            var task = await _bll.Tasks.FirstOrDefaultAsync(id);
+            if (task == null)
             {
                 return NotFound();
             }
-    
-            await _bll.Tasks.RemoveAsync(res);
+
+            // Optionally remove related TaskHistory entries first
+            var historyEntries = await _bll.TaskHistories.GetAllByTaskIdAsync(id);
+            foreach (var entry in historyEntries)
+            {
+                await _bll.TaskHistories.RemoveAsync(entry);
+            }
+
+            await _bll.Tasks.RemoveAsync(task);
             await _bll.SaveChangesAsync();
 
             return NoContent();

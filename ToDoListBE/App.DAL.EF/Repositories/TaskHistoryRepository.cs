@@ -30,5 +30,23 @@ public class TaskHistoryRepository : BaseEntityRepository<APPDomain.TaskHistory,
         var domainCity = await query.FirstOrDefaultAsync(c => c.CurrentTitle == title);
         return domainCity == null ? null : Mapper.Map(domainCity);
     }
+
+    public async Task<IEnumerable<DALDTO.TaskHistory>> GetAllByTaskIdAsync(Guid taskId)
+    {
+        var domainItems = await CreateQuery()
+            .Where(h => h.TaskId == taskId)
+            .ToListAsync();
+
+        return domainItems.Select(e => Mapper.Map(e))!;
+    }
     
+    public async Task<IEnumerable<DALDTO.TaskHistory>> GetAllWithIncludesAsync()
+    {
+        var res = await CreateQuery()
+            .Include(th => th.Task!)
+            .ThenInclude(t => t.ToDoList)
+            .ToListAsync();
+
+        return res.Select(th => Mapper.Map(th));
+    }
 }

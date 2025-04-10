@@ -6,5 +6,6 @@ namespace App.Contracts.BLL.Services;
 public interface ITaskHistoryService :
     IEntityRepository<App.BLL.DTO.TaskHistory>, ITaskHistoryRepositoryCustom<App.BLL.DTO.TaskHistory>
 {
+    Task<IEnumerable<App.BLL.DTO.TaskHistory>> GetAllByTaskIdAsync(Guid taskId);
     
 }

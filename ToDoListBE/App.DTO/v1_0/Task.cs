@@ -1,4 +1,6 @@
-﻿namespace App.DTO.v1_0;
+﻿using System.Text.Json.Serialization;
+
+namespace App.DTO.v1_0;
 
 public class Task
 {
@@ -6,6 +8,7 @@ public class Task
     
     public Guid ToDoListId { get; set; }
     
+    [JsonIgnore]
     public ToDoList? ToDoList { get; set; }
 
     public string Title { get; set; } = default!;
@@ -15,6 +18,8 @@ public class Task
     public DateTime? DueDate { get; set; }
     
     public bool IsCompleted { get; set; }
+    
+    public bool IsArchived { get; set; }
     
     public DateTime? CompletedAt { get; set; }
     

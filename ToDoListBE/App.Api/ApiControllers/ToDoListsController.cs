@@ -139,15 +139,24 @@ namespace App.Api.ApiControllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces("application/json")]
         [Consumes("application/json")]
-        public async Task<ActionResult<App.DTO.v1_0.ToDoList>> DeleteToDoList(Guid id)
+        public async Task<ActionResult> DeleteToDoList(Guid id)
         {
-            var res = await _bll.ToDoLists.FirstOrDefaultAsync(id);
-            if (res == null)
+            var list = await _bll.ToDoLists.FirstOrDefaultAsync(id);
+            if (list == null) return NotFound();
+            
+            var tasks = await _bll.Tasks.GetAllByToDoListIdAsync(id);
+            foreach (var task in tasks)
             {
-                return NotFound();
+                await _bll.Tasks.RemoveAsync(task);
             }
-    
-            await _bll.ToDoLists.RemoveAsync(res);
+            
+            var subLists = await _bll.ToDoLists.GetSubListsAsync(id); // implement this if needed
+            foreach (var subList in subLists)
+            {
+                await _bll.ToDoLists.RemoveAsync(subList); // or recursively delete
+            }
+            
+            await _bll.ToDoLists.RemoveAsync(list);
             await _bll.SaveChangesAsync();
 
             return NoContent();

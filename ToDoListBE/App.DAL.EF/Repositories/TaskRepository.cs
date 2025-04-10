@@ -18,8 +18,11 @@ public class TaskRepository :  BaseEntityRepository<APPDomain.Task, DALDTO.Task,
 
     public async Task<IEnumerable<DALDTO.Task>> GetAllSortedAsync()
     {
-        var query = CreateQuery();
+        var query = CreateQuery()
+            .Include(t => t.ToDoList);
+
         var res = await query.ToListAsync();
+
         return res.Select(e => Mapper.Map(e)).ToList();
     }
 
@@ -29,5 +32,7 @@ public class TaskRepository :  BaseEntityRepository<APPDomain.Task, DALDTO.Task,
         var domainCity = await query.FirstOrDefaultAsync(c => c.Title == title);
         return domainCity == null ? null : Mapper.Map(domainCity);
     }
+    
+    
     
 }

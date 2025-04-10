@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Base.Contracts.Domain;
 
 namespace App.BLL.DTO;
@@ -9,6 +10,7 @@ public class Task : IDomainEntityId
     
     public Guid ToDoListId { get; set; }
     
+    [JsonIgnore]
     public ToDoList? ToDoList { get; set; }
 
     public string Title { get; set; } = default!;
@@ -21,6 +23,7 @@ public class Task : IDomainEntityId
     
     public DateTime? CompletedAt { get; set; }
     
+    public bool IsArchived { get; set; }
     public DateTime? CreatedAt { get; set; }
     
     public DateTime? UpdatedAt { get; set; }

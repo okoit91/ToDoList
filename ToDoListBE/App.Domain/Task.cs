@@ -1,4 +1,5 @@
-﻿using Base.Contracts.Domain;
+﻿using System.Text.Json.Serialization;
+using Base.Contracts.Domain;
 
 namespace App.Domain;
 
@@ -8,6 +9,7 @@ public class Task : IDomainEntityId
     
     public Guid ToDoListId { get; set; }
     
+    [JsonIgnore]
     public ToDoList? ToDoList { get; set; }
 
     public string Title { get; set; } = default!;
@@ -17,6 +19,8 @@ public class Task : IDomainEntityId
     public DateTime? DueDate { get; set; }
     
     public bool IsCompleted { get; set; }
+    
+    public bool IsArchived { get; set; }
     
     public DateTime? CompletedAt { get; set; }
     

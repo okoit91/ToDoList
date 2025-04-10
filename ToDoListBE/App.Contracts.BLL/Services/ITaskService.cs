@@ -8,5 +8,6 @@ public interface ITaskService :
     IEntityRepository<App.BLL.DTO.Task>, ITaskRepositoryCustom<App.BLL.DTO.Task>
 {
     Task<IEnumerable<App.BLL.DTO.Task>> GetAllSortedAsync();
-    
+
+    Task<IEnumerable<App.BLL.DTO.Task>> GetAllByToDoListIdAsync(Guid toDoListId);
 }

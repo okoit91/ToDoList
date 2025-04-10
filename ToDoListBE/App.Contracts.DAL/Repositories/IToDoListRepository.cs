@@ -14,4 +14,6 @@ public interface IToDoListRepositoryCustom<TEntity>
     Task<IEnumerable<TEntity>> GetAllSortedAsync();
     
     Task<TEntity?> FirstOrDefaultByNameAsync(string name);
+    
+    Task<IEnumerable<App.DAL.DTO.ToDoList>> GetSubListsAsync(Guid parentId);
 }

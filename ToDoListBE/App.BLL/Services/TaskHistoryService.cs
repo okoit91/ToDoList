@@ -1,6 +1,4 @@
-﻿using App.BLL.DTO;
-using App.Contracts.BLL;
-using App.Contracts.BLL.Services;
+﻿using App.Contracts.BLL.Services;
 using App.Contracts.DAL;
 using App.Contracts.DAL.Repositories;
 using AutoMapper;
@@ -15,13 +13,13 @@ public class TaskHistoryService :
     public TaskHistoryService(IAppUnitOfWork uow, ITaskHistoryRepository repository, IMapper mapper) :
         base(uow, repository, new BllDalMapper<App.DAL.DTO.TaskHistory, App.BLL.DTO.TaskHistory>(mapper))
     {
-        
     }
 
 
     public async Task<IEnumerable<TaskHistory>> GetAllSortedAsync()
     {
-        return (await Repository.GetAllSortedAsync()).Select(e => Mapper.Map(e));
+        var data = await Repository.GetAllWithIncludesAsync();
+        return data.Select(e => Mapper.Map(e));
     }
     
 
@@ -30,6 +28,11 @@ public class TaskHistoryService :
         var task = await Repository.FirstOrDefaultByNameAsync(title);
         return task == null ? null : Mapper.Map(task);
     }
-    
+
+    public async Task<IEnumerable<BLL.DTO.TaskHistory>> GetAllByTaskIdAsync(Guid taskId)
+    {
+        var items = await Repository.GetAllByTaskIdAsync(taskId);
+        return items.Select(Mapper.Map)!;
+    }
     
 }

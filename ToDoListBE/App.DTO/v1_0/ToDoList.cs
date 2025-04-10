@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace App.DTO.v1_0;
 
@@ -14,8 +15,10 @@ public class ToDoList
     
     public Guid? ParentListId { get; set; }
     
-    [ForeignKey(nameof(ParentListId))]
+    [JsonIgnore]
     public ToDoList? ParentList { get; set; }
     
     public ICollection<ToDoList>? SubLists { get; set; }
+    
+    public ICollection<Task>? Tasks { get; set; }
 }
