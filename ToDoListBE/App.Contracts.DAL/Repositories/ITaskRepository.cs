@@ -13,4 +13,6 @@ public interface ITaskRepositoryCustom<TEntity>
     Task<IEnumerable<TEntity>> GetAllSortedAsync();
     
     Task<TEntity?> FirstOrDefaultByNameAsync(string name);
+    
+    Task<IEnumerable<TEntity>> GetAllByToDoListIdAsync(Guid toDoListId);
 }

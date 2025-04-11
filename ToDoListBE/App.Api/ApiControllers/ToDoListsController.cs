@@ -9,7 +9,7 @@ using WebApp.Helpers;
 namespace App.Api.ApiControllers
 {
     /// <summary>
-    /// 
+    /// API controller for managing to-do lists.
     /// </summary>
     [ApiVersion("1.0")]
     [ApiController]
@@ -29,15 +29,17 @@ namespace App.Api.ApiControllers
             _bll = bll;
             _mapper = new PublicDTOBllMapper<App.DTO.v1_0.ToDoList, App.BLL.DTO.ToDoList>(autoMapper);
         }
+        
+        
         /// <summary>
-        /// Returns all to do lists.
+        /// Retrieves all to-do lists with their sub-lists and tasks.
         /// </summary>
-        /// <returns>List of to do lists</returns>
+        /// <returns>A list of all to-do lists.</returns>
+        /// <response code="200">Returns the list of to-do lists.</response>
         // GET: api/ToDoLists
         [HttpGet]
         [ProducesResponseType<IEnumerable<App.DTO.v1_0.ToDoList>>((int) HttpStatusCode.OK)]
         [Produces("application/json")]
-        [Consumes("application/json")]
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.ToDoList>>> GetToDoLists()
         {
             var res = await _bll.ToDoLists
@@ -46,17 +48,20 @@ namespace App.Api.ApiControllers
             
             return Ok(res);
         }
+        
+        
         /// <summary>
-        /// Returns the to do list with the given id.
+        /// Retrieves a specific to-do list by ID.
         /// </summary>
-        /// <param name="id">given ID</param>
-        /// <returns>to do list with given ID</returns>
+        /// <param name="id">The ID of the to-do list.</param>
+        /// <returns>The requested to-do list.</returns>
+        /// <response code="200">Returns the requested to-do list.</response>
+        /// <response code="404">To-do list with specified ID not found.</response>
         // GET: api/ToDoLists/5
         [HttpGet("{id}")]
         [ProducesResponseType<IEnumerable<App.DTO.v1_0.ToDoList>>((int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces("application/json")]
-        [Consumes("application/json")]
         public async Task<ActionResult<App.DTO.v1_0.ToDoList>> GetToDoList(Guid id)
         {
             var res = await _bll.ToDoLists.FirstOrDefaultAsync(id);
@@ -66,15 +71,19 @@ namespace App.Api.ApiControllers
             }
             return Ok(_mapper.Map(res));
         }
+        
+        
         /// <summary>
-        /// Updates the to do list with the given id.
+        /// Updates an existing to-do list.
         /// </summary>
-        /// <param name="id">Given ID</param>
-        /// <param name="input">Given object</param>
-        /// <returns>No content if updated</returns>
+        /// <param name="id">The ID of the to-do list to update.</param>
+        /// <param name="input">Updated to-do list data.</param>
+        /// <returns>No content on successful update.</returns>
+        /// <response code="204">Successfully updated the to-do list.</response>
+        /// <response code="400">The provided ID does not match the to-do list ID.</response>
+        /// <response code="404">To-do list with specified ID not found.</response>
         // PUT: api/ToDoLists/5
         [HttpPut("{id}")]
-        [ProducesResponseType<IEnumerable<App.DTO.v1_0.ToDoList>>((int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -84,7 +93,7 @@ namespace App.Api.ApiControllers
         {
             if (id != input.Id)
             {
-                return BadRequest();
+                return BadRequest("ID mismatch");
             }
 
             try
@@ -109,14 +118,16 @@ namespace App.Api.ApiControllers
                 }
             }
         }
+        
         /// <summary>
-        /// Creates a new to do list.
+        /// Creates a new to-do list.
         /// </summary>
-        /// <param name="input">Takes in ToDoList object</param>
-        /// <returns>New to do list</returns>
+        /// <param name="input">The to-do list to create.</param>
+        /// <returns>The created to-do list.</returns>
+        /// <response code="201">Successfully created the to-do list.</response>
         // POST: api/ToDoLists
         [HttpPost]
-        [ProducesResponseType<IEnumerable<App.DTO.v1_0.ToDoList>>((int)HttpStatusCode.OK)]
+        [ProducesResponseType<IEnumerable<App.DTO.v1_0.ToDoList>>((int)HttpStatusCode.Created)]
         [Produces("application/json")]
         [Consumes("application/json")]
         public async Task<ActionResult<App.DTO.v1_0.ToDoList>> PostToDoList(App.DTO.v1_0.ToDoList input)
@@ -127,42 +138,35 @@ namespace App.Api.ApiControllers
 
             return CreatedAtAction("GetToDoList", new { id = createdInput.Id }, _mapper.Map(createdInput));
         }
+        
+        
         /// <summary>
-        /// Deletes the to do list with the given id.
+        /// Deletes a to-do list and all its related tasks and task histories.
         /// </summary>
-        /// <param name="id">Takes in ID</param>
-        /// <returns>No content</returns>
+        /// <param name="id">The ID of the to-do list to delete.</param>
+        /// <returns>No content if deletion was successful.</returns>
+        /// <response code="204">Successfully deleted the to-do list and its contents.</response>
+        /// <response code="404">To-do list with specified ID not found.</response>
         // DELETE: api/ToDoLists/5
         [HttpDelete("{id}")]
-        [ProducesResponseType<IEnumerable<App.DTO.v1_0.ToDoList>>((int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces("application/json")]
-        [Consumes("application/json")]
         public async Task<ActionResult> DeleteToDoList(Guid id)
         {
             var list = await _bll.ToDoLists.FirstOrDefaultAsync(id);
             if (list == null) return NotFound();
             
-            var tasks = await _bll.Tasks.GetAllByToDoListIdAsync(id);
-            foreach (var task in tasks)
-            {
-                await _bll.Tasks.RemoveAsync(task);
-            }
-            
-            var subLists = await _bll.ToDoLists.GetSubListsAsync(id); // implement this if needed
-            foreach (var subList in subLists)
-            {
-                await _bll.ToDoLists.RemoveAsync(subList); // or recursively delete
-            }
-            
-            await _bll.ToDoLists.RemoveAsync(list);
+            await _bll.ToDoLists.DeleteListAndRelatedDataAsync(id);
+
             await _bll.SaveChangesAsync();
 
             return NoContent();
         }
+        
+        
         /// <summary>
-        /// Returns true if the to do list with the given id exists.
+        /// Checks if a to-do list with the specified ID exists.
         /// </summary>
         /// <param name="id">Takes in ID</param>
         /// <returns>True if ID exists</returns>

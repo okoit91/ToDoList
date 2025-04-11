@@ -9,7 +9,7 @@ using WebApp.Helpers;
 namespace App.Api.ApiControllers
 {
     /// <summary>
-    /// 
+    /// Controller for managing task entities.
     /// </summary>
     [ApiVersion("1.0")]
     [ApiController]
@@ -30,14 +30,14 @@ namespace App.Api.ApiControllers
             _mapper = new PublicDTOBllMapper<App.DTO.v1_0.Task, App.BLL.DTO.Task>(autoMapper);
         }
         /// <summary>
-        /// Returns all tasks.
+        /// Retrieves all tasks.
         /// </summary>
-        /// <returns>List of tasks</returns>
+        /// <returns>A collection of all tasks.</returns>
+        /// <response code="200">Returns all tasks.</response>
         // GET: api/Tasks
         [HttpGet]
         [ProducesResponseType<IEnumerable<App.DTO.v1_0.Task>>((int) HttpStatusCode.OK)]
         [Produces("application/json")]
-        [Consumes("application/json")]
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.Task>>> GetTasks()
         {
             var res = await _bll.Tasks
@@ -49,16 +49,17 @@ namespace App.Api.ApiControllers
         
         
         /// <summary>
-        /// Returns the task with the given id.
+        /// Retrieves a specific task by ID.
         /// </summary>
-        /// <param name="id">given ID</param>
-        /// <returns>Task with given ID</returns>
+        /// <param name="id">The task's unique identifier.</param>
+        /// <returns>The requested task.</returns>
+        /// <response code="200">Returns the task.</response>
+        /// <response code="404">If the task is not found.</response>
         // GET: api/Tasks/5
         [HttpGet("{id}")]
         [ProducesResponseType<IEnumerable<App.DTO.v1_0.Task>>((int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces("application/json")]
-        [Consumes("application/json")]
         public async Task<ActionResult<App.DTO.v1_0.Task>> GetTask(Guid id)
         {
             var res = await _bll.Tasks.FirstOrDefaultAsync(id);
@@ -70,14 +71,16 @@ namespace App.Api.ApiControllers
         }
         
         /// <summary>
-        /// Updates the task with the given id.
+        /// Updates an existing task.
         /// </summary>
-        /// <param name="id">Given ID</param>
-        /// <param name="input">Given object</param>
-        /// <returns>No content if updated</returns>
+        /// <param name="id">The task ID to update.</param>
+        /// <param name="input">The updated task object.</param>
+        /// <returns>No content if successful.</returns>
+        /// <response code="204">Update successful.</response>
+        /// <response code="400">ID mismatch.</response>
+        /// <response code="404">Task not found.</response>
         // PUT: api/Tasks/5
         [HttpPut("{id}")]
-        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Task>>((int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -87,7 +90,7 @@ namespace App.Api.ApiControllers
         {
             if (id != input.Id)
             {
-                return BadRequest();
+                return BadRequest("ID in URL does not match ID in body.");
             }
 
             try
@@ -115,11 +118,12 @@ namespace App.Api.ApiControllers
         /// <summary>
         /// Creates a new task.
         /// </summary>
-        /// <param name="input">Takes in Task object</param>
-        /// <returns>New task</returns>
+        /// <param name="input">The task to create.</param>
+        /// <returns>The created task.</returns>
+        /// <response code="201">Task created.</response>
         // POST: api/Tasks
         [HttpPost]
-        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Task>>((int)HttpStatusCode.OK)]
+        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Task>>((int)HttpStatusCode.Created)]
         [Produces("application/json")]
         [Consumes("application/json")]
         public async Task<ActionResult<App.DTO.v1_0.Task>> PostTask(App.DTO.v1_0.Task input)
@@ -132,18 +136,19 @@ namespace App.Api.ApiControllers
 
             return CreatedAtAction("GetTask", new { id = createdInput.Id }, _mapper.Map(createdInput));
         }
+        
         /// <summary>
-        /// Deletes the task with the given id.
+        /// Deletes the specified task and its history.
         /// </summary>
-        /// <param name="id">Takes in ID</param>
-        /// <returns>No content</returns>
+        /// <param name="id">The ID of the task to delete.</param>
+        /// <returns>No content if successful.</returns>
+        /// <response code="204">Task deleted.</response>
+        /// <response code="404">Task not found.</response>
         // DELETE: api/Tasks/5
         [HttpDelete("{id}")]
-        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Task>>((int)HttpStatusCode.OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces("application/json")]
-        [Consumes("application/json")]
         public async Task<ActionResult<App.DTO.v1_0.Task>> DeleteTask(Guid id)
         {
             var task = await _bll.Tasks.FirstOrDefaultAsync(id);
@@ -151,8 +156,7 @@ namespace App.Api.ApiControllers
             {
                 return NotFound();
             }
-
-            // Optionally remove related TaskHistory entries first
+            
             var historyEntries = await _bll.TaskHistories.GetAllByTaskIdAsync(id);
             foreach (var entry in historyEntries)
             {

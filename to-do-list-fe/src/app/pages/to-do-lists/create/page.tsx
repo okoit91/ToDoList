@@ -41,7 +41,6 @@ export default function CreateTodoList() {
         const data = await res.json();
         setAvailableLists(data);
 
-        // Set parent list name if parentId is defined
         if (parentId) {
           const flatLists = flattenLists(data);
           const matchedParent = flatLists.find((list) => list.id === parentId);
@@ -144,7 +143,6 @@ export default function CreateTodoList() {
           </p>
         )}
 
-        {/* Parent List Dropdown */}
         <div>
           <label className="block text-gray-700 font-medium">Parent List</label>
           <select

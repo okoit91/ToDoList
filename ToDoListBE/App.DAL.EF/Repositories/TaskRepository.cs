@@ -15,6 +15,14 @@ public class TaskRepository :  BaseEntityRepository<APPDomain.Task, DALDTO.Task,
     {
     }
     
+    public async Task<IEnumerable<App.DAL.DTO.Task>> GetAllByToDoListIdAsync(Guid toDoListId)
+    {
+        var domainTasks = await CreateQuery()
+            .Where(t => t.ToDoListId == toDoListId)
+            .ToListAsync();
+
+        return domainTasks.Select(t => Mapper.Map(t))!;
+    }
 
     public async Task<IEnumerable<DALDTO.Task>> GetAllSortedAsync()
     {

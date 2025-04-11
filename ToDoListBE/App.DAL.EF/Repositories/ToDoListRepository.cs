@@ -35,13 +35,6 @@ public class ToDoListRepository : BaseEntityRepository<APPDomain.ToDoList, DALDT
 
         return rootLists.Select(e => Mapper.Map(e)).ToList();
     }
-
-    public async Task<DALDTO.ToDoList?> FirstOrDefaultByNameAsync(string name)
-    {
-        var query = CreateQuery();
-        var domainList = await query.FirstOrDefaultAsync(c => c.Name == name);
-        return domainList == null ? null : Mapper.Map(domainList);
-    }
     
     protected override IQueryable<APPDomain.ToDoList> CreateQuery(bool noTracking = true)
     {
@@ -65,7 +58,7 @@ public class ToDoListRepository : BaseEntityRepository<APPDomain.ToDoList, DALDT
         }
     }
     
-    public async Task<IEnumerable<DALDTO.ToDoList>> GetSubListsAsync(Guid parentId)
+    public async Task<IEnumerable<App.DAL.DTO.ToDoList>> GetSubListsAsync(Guid parentId)
     {
         var domainLists = await CreateQuery()
             .Where(l => l.ParentListId == parentId)

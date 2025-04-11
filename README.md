@@ -19,7 +19,7 @@ dotnet run --project WebApp/WebApp.csproj
 
 ~~~
 
-2) Navigate to the ToDoListFE folder and run following commands:
+2) Navigate to the to-do-list-fe folder and run following commands:
 
 npm install
 npm run dev

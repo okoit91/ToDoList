@@ -28,13 +28,11 @@ public class TaskService :
         return task == null ? null : Mapper.Map(task);
     }
     
+
     public async Task<IEnumerable<App.BLL.DTO.Task>> GetAllByToDoListIdAsync(Guid toDoListId)
     {
-        var tasks = await Repository.GetAllAsync();
-        return tasks
-            .Where(t => t.ToDoListId == toDoListId)
-            .Select(t => Mapper.Map(t)) // <-- Use the base-provided mapper
-            .ToList();
+        var tasks = await Repository.GetAllByToDoListIdAsync(toDoListId);
+        return tasks.Select(Mapper.Map).ToList();
     }
 
     

@@ -28,7 +28,7 @@ export default function DeleteTask() {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/v1.0/todolists/${taskId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1.0/tasks/${taskId}`, {
         method: "DELETE",
       });
   

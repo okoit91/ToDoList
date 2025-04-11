@@ -5,6 +5,7 @@ using App.Contracts.DAL;
 using App.Contracts.DAL.Repositories;
 using AutoMapper;
 using Base.BLL;
+using Task = App.DAL.DTO.Task;
 using ToDoList = App.BLL.DTO.ToDoList;
 
 namespace App.BLL.services;
@@ -14,12 +15,14 @@ public class ToDoListService :
 {
     
     private readonly IMapper _autoMapper;
+    private readonly IAppUnitOfWork _uow;
     public ToDoListService(
         IAppUnitOfWork uow,
         IToDoListRepository repository,
         IMapper mapper
     ) : base(uow, repository, new BllDalMapper<App.DAL.DTO.ToDoList, App.BLL.DTO.ToDoList>(mapper))
     {
+        _uow = uow;
         _autoMapper = mapper;
     }
     
@@ -38,11 +41,7 @@ public class ToDoListService :
             .Select(l => _autoMapper.Map<App.DAL.DTO.ToDoList, App.BLL.DTO.ToDoList>(l))
             .ToList();
     }
-
-    public Task<ToDoList?> FirstOrDefaultByNameAsync(string name)
-    {
-        throw new NotImplementedException();
-    }
+    
 
 
     private ToDoList MapWithChildren(App.DAL.DTO.ToDoList entity)
@@ -62,6 +61,40 @@ public class ToDoListService :
         }
 
         return mapped;
+    }
+    
+    public async System.Threading.Tasks.Task DeleteListAndRelatedDataAsync(Guid listId)
+    {
+        // Delete tasks and their histories
+        var tasks = await _uow.TaskRepository.GetAllByToDoListIdAsync(listId);
+
+        foreach (var task in tasks)
+        {
+            var histories = await _uow.TaskHistoryRepository.GetAllByTaskIdAsync(task.Id);
+            foreach (var history in histories)
+            {
+                await _uow.TaskHistoryRepository.RemoveAsync(history);
+            }
+
+            await _uow.TaskRepository.RemoveAsync(task);
+        }
+
+        // Delete sub-lists recursively
+        var subLists = await _uow.ToDoListRepository.GetSubListsAsync(listId);
+        foreach (var subList in subLists)
+        {
+            await DeleteListAndRelatedDataAsync(subList!.Id);
+            await _uow.ToDoListRepository.RemoveAsync(subList);
+        }
+
+        // remove list
+        var current = await _uow.ToDoListRepository.FirstOrDefaultAsync(listId);
+        if (current != null)
+        {
+            await _uow.ToDoListRepository.RemoveAsync(current);
+        }
+
+        await _uow.SaveChangesAsync();
     }
     
 }

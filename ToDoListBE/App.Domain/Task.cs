@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Base.Contracts.Domain;
 
 namespace App.Domain;
@@ -11,7 +12,6 @@ public class Task : IDomainEntityId
     
     [JsonIgnore]
     public ToDoList? ToDoList { get; set; }
-
     public string Title { get; set; } = default!;
     
     public string? Description { get; set; }

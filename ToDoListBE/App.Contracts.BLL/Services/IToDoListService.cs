@@ -5,10 +5,10 @@ using Base.Contracts.DAL;
 namespace App.Contracts.BLL.Services;
 
 public interface IToDoListService :
-    IEntityRepository<App.BLL.DTO.ToDoList>, ITaskRepositoryCustom<App.BLL.DTO.ToDoList>
+    IEntityRepository<App.BLL.DTO.ToDoList>, IToDoListRepositoryCustom<App.BLL.DTO.ToDoList>
 {
     Task<IEnumerable<App.BLL.DTO.ToDoList>> GetAllSortedAsync();
     
-    public Task<IEnumerable<ToDoList>> GetSubListsAsync(Guid parentId);
+    public System.Threading.Tasks.Task DeleteListAndRelatedDataAsync(Guid listId);
     
 }

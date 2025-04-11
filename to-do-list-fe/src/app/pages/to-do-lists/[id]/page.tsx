@@ -4,13 +4,25 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/api";
 import Link from "next/link";
+import TodoListCard from "@/components/ToDoListCard";
+
+interface TaskItem {
+  id: string;
+  title: string;
+  description?: string;
+  isCompleted: boolean;
+  isArchived: boolean;
+  dueDate?: string;
+  completedAt?: string | null;
+}
 
 interface TodoList {
   id: string;
   name: string;
   createdAt: string;
   parentListId?: string | null;
-  subLists?: string[];
+  subLists?: TodoList[];
+  tasks?: TaskItem[];
 }
 
 export default function TodoListDetails() {
@@ -36,6 +48,25 @@ export default function TodoListDetails() {
       });
   }, [id]);
 
+  const updateTask = (
+    listId: string,
+    taskId: string,
+    updatedTask: Partial<TaskItem> | null
+  ) => {
+    if (!data) return;
+
+    const updated = {
+      ...data,
+      tasks: updatedTask
+        ? data.tasks?.map((task) =>
+            task.id === taskId ? { ...task, ...updatedTask } : task
+          )
+        : data.tasks?.filter((task) => task.id !== taskId),
+    };
+
+    setData(updated);
+  };
+
   if (loading) {
     return <p className="text-gray-500 text-center">Loading to-do list...</p>;
   }
@@ -49,32 +80,20 @@ export default function TodoListDetails() {
   }
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-md mt-10">
-      <h1 className="text-2xl font-bold mb-6 text-center">To-do List Details</h1>
-
-      <div className="mb-4 space-y-2 text-gray-900">
-        <p>
-          <strong>Name:</strong> {data.name}
-        </p>
-        <p>
-          <strong>Created At:</strong>{" "}
-          {new Date(data.createdAt).toLocaleString()}
-        </p>
-        {data.parentListId && (
-          <p>
-            <strong>Parent List ID:</strong> {data.parentListId}
-          </p>
-        )}
-        {data.subLists && data.subLists.length > 0 && (
-          <p>
-            <strong>SubLists:</strong> {data.subLists.join(", ")}
-          </p>
-        )}
+    <div className="max-w-4xl mx-auto mt-10 px-4">
+      <div
+        role="heading"
+        aria-level={1}
+        className="text-3xl font-bold text-white text-center mb-8"
+      >
+        To-Do List Details
       </div>
 
-      <div className="text-center mt-4">
+      <TodoListCard list={data} updateTask={updateTask} />
+
+      <div className="text-center mt-6">
         <Link href="/pages/to-do-lists" className="text-blue-500 hover:underline">
-          Back to To-do Lists
+          Back to To-Do Lists
         </Link>
       </div>
     </div>
