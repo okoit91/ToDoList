@@ -28,23 +28,20 @@ namespace App.Test.Api
         public TaskControllerTest()
         {
             _logger = Substitute.For<ILogger<TasksController>>();
-            // 1) Mock the BLL
+            
             _bllMock = Substitute.For<IAppBLL>();
-
-            // 2) Mock the BLL's TaskService
+            
             _bllMock.Tasks.Returns(Substitute.For<ITaskService>());
-            // Also, if needed, mock TaskHistories for delete tests:
+            
             _bllMock.TaskHistories.Returns(Substitute.For<ITaskHistoryService>());
 
-            // 3) Configure AutoMapper for the Web layer
+            
             var configWeb = new MapperConfiguration(cfg =>
             {
-                // Map from BLL.DTO.Task <-> App.DTO.v1_0.Task
                 cfg.CreateMap<App.BLL.DTO.Task, App.DTO.v1_0.Task>().ReverseMap();
             });
             _mapperWeb = configWeb.CreateMapper();
-
-            // 4) Create the controller
+            
             _controller = new TasksController(_bllMock, _mapperWeb, _logger);
         }
 
@@ -65,7 +62,7 @@ namespace App.Test.Api
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
-            // We expect an IEnumerable<App.DTO.v1_0.Task> from the controller
+            
             var tasks = Assert.IsAssignableFrom<IEnumerable<App.DTO.v1_0.Task>>(okResult.Value);
             Assert.Equal(2, tasks.Count());
             Assert.Equal("Task 1", tasks.First().Title);
@@ -175,12 +172,10 @@ namespace App.Test.Api
                 Id = taskId,
                 Title = "WillThrow"
             };
-
-            // Force concurrency exception
+            
             _bllMock.Tasks.UpdateAsync(Arg.Any<App.BLL.DTO.Task>())
                 .Throws(new DbUpdateConcurrencyException());
-
-            // Indicate the task still exists
+            
             _bllMock.Tasks.ExistsAsync(taskId).Returns(true);
 
             // Act + Assert
