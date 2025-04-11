@@ -18,16 +18,18 @@ namespace App.Api.ApiControllers
     {
         private readonly IAppBLL _bll;
         private readonly PublicDTOBllMapper<App.DTO.v1_0.Task, App.BLL.DTO.Task> _mapper;
+        private readonly ILogger<TasksController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="bll"></param>
         /// <param name="autoMapper"></param>
-        public TasksController(IAppBLL bll, IMapper autoMapper)
+        public TasksController(IAppBLL bll, IMapper autoMapper, ILogger<TasksController> logger)
         {
             _bll = bll;
             _mapper = new PublicDTOBllMapper<App.DTO.v1_0.Task, App.BLL.DTO.Task>(autoMapper);
+            _logger = logger;
         }
         /// <summary>
         /// Retrieves all tasks.
@@ -36,15 +38,16 @@ namespace App.Api.ApiControllers
         /// <response code="200">Returns all tasks.</response>
         // GET: api/Tasks
         [HttpGet]
-        [ProducesResponseType<IEnumerable<App.DTO.v1_0.Task>>((int) HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<App.DTO.v1_0.Task>), (int) HttpStatusCode.OK)]
         [Produces("application/json")]
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.Task>>> GetTasks()
         {
-            var res = await _bll.Tasks
-                .GetAllSortedAsync();
-                
+            var bllTasks = await _bll.Tasks.GetAllSortedAsync();
+            _logger.LogInformation("Fetched {Count} tasks.", bllTasks.Count());
             
-            return Ok(res);
+            var mapped = bllTasks.Select(t => _mapper.Map(t)).ToList();
+            
+            return Ok(mapped);
         }
         
         
@@ -67,6 +70,7 @@ namespace App.Api.ApiControllers
             {
                 return NotFound();
             }
+            _logger.LogInformation("Task {TaskId} fetched successfully.", id);
             return Ok(_mapper.Map(res));
         }
         
@@ -101,6 +105,7 @@ namespace App.Api.ApiControllers
                 {
                     return NotFound();
                 }
+                _logger.LogInformation("Task {TaskId} updated successfully.", id);
                 return NoContent();
             }
             catch (DbUpdateConcurrencyException)
@@ -166,6 +171,7 @@ namespace App.Api.ApiControllers
             await _bll.Tasks.RemoveAsync(task);
             await _bll.SaveChangesAsync();
 
+            _logger.LogInformation("Task {TaskId} and related history deleted successfully.", id);
             return NoContent();
         }
         /// <summary>

@@ -1,0 +1,39 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\Oskar\AppData\Local\JetBrains\Rider2023.2\resharper-host\temp\Rider\vAny\CoverageData\_ToDoListBE.1969695869\Snapshot\snapshot.utdcvr</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=31df99ff_002Ddc2e_002D4496_002Dac46_002D8d1fe2a2a250/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteToDoList_ReturnsNoContent #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.ToDoListIntegrationTests.DeleteToDoList_ReturnsNoContent&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8ba3257f_002D7a51_002D4027_002Dac34_002D8468fe827dac/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ToDoListControllerTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.Api.ToDoListControllerTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.Api.TaskControllerTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.Api.TaskHistoryControllerTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.BaseEntityRepositoryTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.ToDoListIntegrationTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b418ab0f_002Db8ed_002D467f_002Db6ab_002Da1562438b269/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteToDoList_ReturnsNoContent #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.ToDoListIntegrationTests.DeleteToDoList_ReturnsNoContent&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bbfbce4b_002Da29c_002D48c1_002D8362_002Dffc1f0c9f747/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteToDoList_ReturnsNoContent" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.ToDoListIntegrationTests.DeleteToDoList_ReturnsNoContent&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c1ea7c7d_002D5aba_002D42a8_002D8020_002D6836314f241d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="DeleteToDoList_ReturnsNoContent #6" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\Users\Oskar\RiderProjects\ToDoList\ToDoListBE\App.Test" Presentation="&amp;lt;App&amp;gt;\&amp;lt;App.Test&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e9eca4b3_002D6715_002D4853_002D9f4a_002D4c31cb9eea9d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteToDoList_ReturnsNoContent #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.ToDoListIntegrationTests.DeleteToDoList_ReturnsNoContent&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f15e5b59_002Df3d3_002D476a_002Dbe62_002D7abb125a1c75/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="DeleteToDoList_ReturnsNoContent #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::458E3AC9-CB94-4D09-B48A-99C034B9035B::net8.0::App.Test.ToDoListIntegrationTests.DeleteToDoList_ReturnsNoContent&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

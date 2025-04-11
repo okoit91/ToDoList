@@ -18,16 +18,18 @@ namespace App.Api.ApiControllers
     {
         private readonly IAppBLL _bll;
         private readonly PublicDTOBllMapper<App.DTO.v1_0.TaskHistory, App.BLL.DTO.TaskHistory> _mapper;
-
+        private readonly ILogger<TaskHistoriesController> _logger;
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskHistoriesController"/> class.
         /// </summary>
         /// <param name="bll">The BLL interface for accessing business logic.</param>
         /// <param name="autoMapper">The AutoMapper instance for DTO/entity mapping.</param>
-        public TaskHistoriesController(IAppBLL bll, IMapper autoMapper)
+        public TaskHistoriesController(IAppBLL bll, IMapper autoMapper, ILogger<TaskHistoriesController> logger)
         {
             _bll = bll;
             _mapper = new PublicDTOBllMapper<App.DTO.v1_0.TaskHistory, App.BLL.DTO.TaskHistory>(autoMapper);
+            _logger = logger;
         }
         
         
@@ -43,9 +45,13 @@ namespace App.Api.ApiControllers
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.TaskHistory>>> GetTaskHistories()
         {
             var res = await _bll.TaskHistories
+                    
                     .GetAllSortedAsync();
+            _logger.LogInformation("Found {Count} TaskHistories.", res.Count());
             
-            return Ok(res);
+            var mapped = res.Select(t => _mapper.Map(t)).ToList();
+            
+            return Ok(mapped);
         }
         
         
@@ -66,8 +72,9 @@ namespace App.Api.ApiControllers
             var res = await _bll.TaskHistories.FirstOrDefaultAsync(id);
             if (res == null)
             {
-                return NotFound();
+                return NotFound("TaskHistory not found.");
             }
+            _logger.LogInformation("TaskHistory {Id} fetched successfully.", id);
             return Ok(_mapper.Map(res));
         }
         
@@ -102,6 +109,8 @@ namespace App.Api.ApiControllers
                 {
                     return NotFound("TaskHistory not found for the given ID.");
                 }
+                
+                _logger.LogInformation("TaskHistory {Id} updated successfully.", id);
                 return NoContent();
             }
             catch (DbUpdateConcurrencyException)
@@ -134,6 +143,7 @@ namespace App.Api.ApiControllers
             var createdInput = _bll.TaskHistories.Add(res);
             await _bll.SaveChangesAsync();
 
+            _logger.LogInformation("TaskHistory {Id} created successfully.", createdInput.Id);
             return CreatedAtAction("GetTaskHistory", new { id = createdInput.Id }, _mapper.Map(createdInput));
         }
         
@@ -161,6 +171,7 @@ namespace App.Api.ApiControllers
             await _bll.TaskHistories.RemoveAsync(res);
             await _bll.SaveChangesAsync();
 
+            _logger.LogInformation("TaskHistory {Id} deleted successfully.", id);
             return NoContent();
         }
         
@@ -177,7 +188,7 @@ namespace App.Api.ApiControllers
         public async Task<IActionResult> RevertTaskHistory(Guid id)
         {
             var history = await _bll.TaskHistories.FirstOrDefaultAsync(id);
-            if (history == null) return NotFound();
+            if (history == null) return NotFound("TaskHistory not found.");
 
             
             history.RevertedAt = DateTime.UtcNow;
@@ -195,6 +206,8 @@ namespace App.Api.ApiControllers
             _bll.Tasks.Update(task);
             await _bll.SaveChangesAsync();
 
+            _logger.LogInformation("Task {TaskId} was successfully reactivated from history {HistoryId}.",
+                task.Id, id);
             return NoContent();
         }
         

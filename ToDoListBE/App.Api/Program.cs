@@ -83,11 +83,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpClient();
 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 
 // End of setup.
 // =======================================
 var app = builder.Build();
 // =======================================
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Starting application in {Environment} environment", app.Environment.EnvironmentName);
 
 
 app.UseRouting();
@@ -99,6 +106,7 @@ app.UseAuthorization();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseMigrationsEndPoint();
 }
 else
@@ -112,8 +120,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseAuthorization();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseSwagger();
 

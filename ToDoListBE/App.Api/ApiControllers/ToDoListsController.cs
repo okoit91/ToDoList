@@ -18,16 +18,18 @@ namespace App.Api.ApiControllers
     {
         private readonly IAppBLL _bll;
         private readonly PublicDTOBllMapper<App.DTO.v1_0.ToDoList, App.BLL.DTO.ToDoList> _mapper;
+        private readonly ILogger<ToDoListsController> _logger;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="bll"></param>
         /// <param name="autoMapper"></param>
-        public ToDoListsController(IAppBLL bll, IMapper autoMapper)
+        public ToDoListsController(IAppBLL bll, IMapper autoMapper, ILogger<ToDoListsController> logger)
         {
             _bll = bll;
             _mapper = new PublicDTOBllMapper<App.DTO.v1_0.ToDoList, App.BLL.DTO.ToDoList>(autoMapper);
+            _logger = logger;
         }
         
         
@@ -42,11 +44,12 @@ namespace App.Api.ApiControllers
         [Produces("application/json")]
         public async Task<ActionResult<IEnumerable<App.DTO.v1_0.ToDoList>>> GetToDoLists()
         {
-            var res = await _bll.ToDoLists
-                .GetAllSortedAsync();
-                
-            
-            return Ok(res);
+            var res = await _bll.ToDoLists.GetAllSortedAsync();
+            _logger.LogInformation("Retrieved {Count} ToDoLists", res.Count());
+
+            var mapped = res.Select(e => _mapper.Map(e)).ToList();
+
+            return Ok(mapped);
         }
         
         
@@ -67,8 +70,11 @@ namespace App.Api.ApiControllers
             var res = await _bll.ToDoLists.FirstOrDefaultAsync(id);
             if (res == null)
             {
+                _logger.LogWarning("ToDoList with ID {Id} not found.", id);
                 return NotFound();
             }
+            
+            _logger.LogInformation("ToDoList {Id} retrieved successfully.", id);
             return Ok(_mapper.Map(res));
         }
         
@@ -98,18 +104,22 @@ namespace App.Api.ApiControllers
 
             try
             {
+                _logger.LogInformation("Updating ToDoList with ID {Id}", id);
                 var res = _mapper.Map(input);
                 var updatedInput = await _bll.ToDoLists.UpdateAsync(res);
                 if (updatedInput == null)
                 {
                     return NotFound();
                 }
+                
+                _logger.LogInformation("ToDoList {Id} updated successfully.", id);
                 return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!await ToDoListExistsAsync(id))
                 {
+                    _logger.LogWarning("ToDoList with ID {Id} no longer exists (concurrency).", id);
                     return NotFound();
                 }
                 else
@@ -150,10 +160,14 @@ namespace App.Api.ApiControllers
         // DELETE: api/ToDoLists/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Produces("application/json")]
         public async Task<ActionResult> DeleteToDoList(Guid id)
         {
+            
+            _logger.LogInformation("Attempting to delete ToDoList with ID {Id}", id);
+            
             var list = await _bll.ToDoLists.FirstOrDefaultAsync(id);
             if (list == null) return NotFound();
             
@@ -161,6 +175,7 @@ namespace App.Api.ApiControllers
 
             await _bll.SaveChangesAsync();
 
+            _logger.LogInformation("ToDoList with ID {Id} and related data deleted.", id);
             return NoContent();
         }
         
